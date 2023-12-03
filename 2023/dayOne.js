@@ -68,4 +68,4 @@ function getFirstAndLastNumberPart2(line) {
   return `${first}${last}`
 }
 
-dayOne().catch(err => console.log('error while running dayOOne: ', err))
+dayOne().catch(err => console.log('error while running dayOne: ', err))
