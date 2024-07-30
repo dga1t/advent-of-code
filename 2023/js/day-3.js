@@ -1,10 +1,10 @@
 const fs = require('fs')
 
 
-const INPUT = "./inputFiles/input3.txt"
-const file = fs.readFileSync(INPUT, { encoding: "utf8" })
+const INPUT = './inputFiles/input3.txt'
+const file = fs.readFileSync(INPUT, { encoding: 'utf8' })
 
-const lines = file.split("\n")
+const lines = file.split('\n')
 // regex for matching all the numbers
 const reNum = /\d+/g
 // regex for matching anything which is not a number or dot
@@ -32,7 +32,7 @@ lines.forEach((line, lineIndex) => {
     let isPart = false
     
     // FOR PART 2 
-    let gearIndex = "" // to track
+    let gearIndex = '' // to track
 
     // for PART 1
     // we need to check if their is any symbol adjacent to the number
