@@ -24,17 +24,13 @@ for (const line of lines) {
   // console.log('points @ ', points)
   totalPoints+=points
   
-  countScratchcards(winningNums, givenNums)
+  const cards = countScratchcards(winningNums, givenNums)
+  if (cards > 0) console.log('total cards @ ', cards)
+  // if (currentCardNum === 3) break   // 4 testing
   
-  if (currentCardNum === 3) break   // 4 testing
-  
-  // const cards = countScratchcards(winningNums, givenNums)
-  // console.log('cards @ ', cards)
-  // totalCards+=cards
 }
 
 console.log('total points @ ', totalPoints)
-console.log('total cards @ ', totalCards)
 
 function splitCardNumbers(line) {
   const re = /Card\s+\d+:\s*((?:\d{1,2}\s+){10})\s*\|\s*((?:\d{1,2}\s*)+)/
@@ -71,25 +67,27 @@ function countScratchcards(winningNums, givenNums) {
     }
   }
   
-  console.log('winningNumsCounter @', winningNumsCounter)
+  // console.log('winningNumsCounter @', winningNumsCounter)
   
   for (let i = 1; i <= winningNumsCounter; i++) {
     const key = currentCardNum + i
     const curValue = cardCounter[key]
-    const newValue = curValue + 1
-    console.log('key @', key)
-    // cardCounter[key.toString()] = value + 1
-    Object.assign(cardCounter, { [key]: `${newValue}` })
+    const newValue = curValue ? curValue + 1 : 1
+    Object.assign(cardCounter, { [key]: newValue })
+    
+    // TODO - check the end of the table and don't add cards past it ??
   }
   
   if (lines.length === currentCardNum) {
     // calculate total cards (and reutrn the result ?)
+    cards = Object.values(cardCounter).reduce((a, b) => a + b, 0)
+    
+    return cards
+    // console.log('currentCardNum @ ', currentCardNum)
+    // console.log('cardCounter @ ', cardCounter)
   }
-  
-  console.log('currentCardNum @ ', currentCardNum)
-  console.log('cardCounter @ ', cardCounter)
   
   currentCardNum++
   
-  // return cards
+  return 0
 }
