@@ -30,7 +30,7 @@ for (let i = 0; i < inputs.length; i++) {
     curAlmanacKey = almanacEntries[curEntryIdx][0]
     continue
   }
-  almanac[curAlmanacKey].push(inputs[i])
+  almanac[curAlmanacKey].push(inputs[i].split(' ').map(str => parseInt(str)))
 }
 
 // console.log('almanac === ', almanac)
@@ -38,49 +38,27 @@ for (let i = 0; i < inputs.length; i++) {
 // Each line within a map contains three numbers:
 // the destination range start, the source range start, and the range length.
 // Any source numbers that aren't mapped correspond to the same destination number.
-
 // Find the lowest location number that corresponds to any of the initial seeds.
 
-function mapSourceToDestNum(curNum, dest, source, range) {
-  // if num is out of source range then the dest num is the same 
-  if (curNum < source || curNum > source + range) {
-    return curNum
-  }
-  const diff = curNum - source
-  return dest + diff
-}
-
-let lowestLocation = Infinity
-
-function findLowestLocationNum() {
-  let curNumToMap = 0
-  for (const seedNum of seeds) {
-    curNumToMap = parseInt(seedNum)
-    for (const map in almanac) {
-      console.log('map --- ', map)
-      // console.log('almanac[map] --- ',almanac[map])
-      
-      // pick lowest dest num from each map ??
-      let curLowestMapNum = Infinity
-      for (const nums of almanac[map]) {
-        // console.log('nums --- ', nums)
-        const [dest, source, range] = nums.split(' ').map(str => parseInt(str))
-        const destNum = mapSourceToDestNum(curNumToMap, dest, source, range)
-        if (destNum < curLowestMapNum) curLowestMapNum = destNum 
-        // console.log('curLowestMapNum --- ', curLowestMapNum)
-      }
-      curNumToMap = curLowestMapNum
-      console.log('curNumToMap 1 --- ', curNumToMap)
-      console.log('typeof curNumToMap 1 --- ', typeof curNumToMap)
-    }
-    if (curNumToMap < lowestLocation) {
-      console.log('curNumToMap 2 --- ', curNumToMap)
-      lowestLocation = curNumToMap
-    }
+function findLowestLocation() {
+  let mapInput = seeds  // start with seed nums
+  
+  for (const map in almanac) {
+    let destNums = []
     
-    console.log('lowestLocation --- ', lowestLocation)
+    for (const input of mapInput) {
+      const mappedSource = almanac[map].filter(numsGroup => input > numsGroup[1] && input < numsGroup[1] + numsGroup[2])
+      
+      let destNum
+      if (mappedSource.length) destNum = input - mappedSource[0][1] + mappedSource[0][0]        
+      else destNum = input
+      
+      destNums.push(destNum)
+    } 
+    mapInput = destNums  // upate at the end of each almanac map
   }
+  const lowestLocation = Math.min(...mapInput)
+  console.log('lowestLocation --- ', lowestLocation)
 }
 
-findLowestLocationNum()
-
+findLowestLocation()
