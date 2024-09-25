@@ -1,4 +1,4 @@
-const headers = { 'Cookie': 'session=53616c7465645f5feaeaca0de6413a3502ea86f79285584e1ffa5d1094fedb13c1963766789c1a04f962954f9866cfb73457d6b2e746e8fe04bfd29cf73e3b65'}
+const headers = { 'Cookie': 'session=53616c7465645f5f19ec1723624ca1bf2d3a9d1fa3b33138a33d0fd5a744581f04ace0bf46e11952e84a6db596596bc3d087ae8c1def96b2114c4c9a3e844b23'}
 
 let response = await fetch('https://adventofcode.com/2023/day/5/input', { headers })
 let txt = await response.text()
@@ -6,7 +6,7 @@ let inputs = txt.trim().split('\n')
 // console.log('inputs --- ', inputs)
 
 const seeds = inputs.shift().slice(7).split(' ')
-// console.log('seeds --- ', seeds)
+console.log('seeds --- ', seeds)
 
 const almanac = {
   seedToSoil: [],
@@ -40,9 +40,7 @@ for (let i = 0; i < inputs.length; i++) {
 // Any source numbers that aren't mapped correspond to the same destination number.
 // Find the lowest location number that corresponds to any of the initial seeds.
 
-function findLowestLocation() {
-  let mapInput = seeds  // start with seed nums
-  
+function findLowestLocation(mapInput) {  
   for (const map in almanac) {
     let destNums = []
     
@@ -57,8 +55,38 @@ function findLowestLocation() {
     } 
     mapInput = destNums  // upate at the end of each almanac map
   }
-  const lowestLocation = Math.min(...mapInput)
-  console.log('lowestLocation --- ', lowestLocation)
+  return Math.min(...mapInput)
 }
 
-findLowestLocation()
+// uncomment and run 4 part 1 solution
+// const lowestLocation = findLowestLocation(seeds)
+// console.log('lowestLocation --- ', lowestLocation)
+
+// VEERY SLOOW - find a way to optimize
+function findLowestLocationPartTwo(mapInput) {
+  const lowestLocations = []
+  for (let i = 0; i < mapInput.length; i+=2) {
+    const seedsRangeStart = parseInt(mapInput[i])
+    const seedsRangeEnd = parseInt(mapInput[i]) + parseInt(mapInput[i+1])
+    const batchSize = 100000
+    let seedsBatch = []
+    for (let j = seedsRangeStart; j < seedsRangeEnd; j++) {
+      seedsBatch.push(j)
+      if (seedsBatch.length === batchSize) {
+        console.log('seedsBatch.length --- ', seedsBatch.length)
+        const lowestLocation = findLowestLocation(seedsBatch)
+        lowestLocations.push(lowestLocation)
+        seedsBatch = []
+      }
+    }
+    if (seedsBatch.length > 0) {
+      console.log('remaining seedsBatch.length --- ', seedsBatch.length)
+      const lowestLocation = findLowestLocation(seedsBatch)
+      lowestLocations.push(lowestLocation)      
+    }
+  }
+  console.log('lowestLocations.length === ', lowestLocations.length)
+  return Math.min(lowestLocations)
+}
+const lowestLocationPartTwo = findLowestLocationPartTwo(seeds)
+console.log('lowestLocationPartTwo --- ', lowestLocationPartTwo)
