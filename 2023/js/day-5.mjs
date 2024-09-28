@@ -62,31 +62,44 @@ function findLowestLocation(mapInput) {
 // const lowestLocation = findLowestLocation(seeds)
 // console.log('lowestLocation --- ', lowestLocation)
 
+
+function* rangeGenerator(start, end) {
+  for (let i = start; i < end; i++) {
+    yield i
+  }
+}
+
 // VEERY SLOOW - find a way to optimize
 function findLowestLocationPartTwo(mapInput) {
   const lowestLocations = []
+  const batchSize = 100000
+  let batchLocations = []
+  
   for (let i = 0; i < mapInput.length; i+=2) {
     const seedsRangeStart = parseInt(mapInput[i])
     const seedsRangeEnd = parseInt(mapInput[i]) + parseInt(mapInput[i+1])
-    const batchSize = 100000
-    let seedsBatch = []
-    for (let j = seedsRangeStart; j < seedsRangeEnd; j++) {
-      seedsBatch.push(j)
-      if (seedsBatch.length === batchSize) {
-        console.log('seedsBatch.length --- ', seedsBatch.length)
-        const lowestLocation = findLowestLocation(seedsBatch)
-        lowestLocations.push(lowestLocation)
-        seedsBatch = []
+    
+    const range = rangeGenerator(seedsRangeStart, seedsRangeEnd)
+      
+    for (let value of range) {
+      const location = findLowestLocation([value])  // use func from part one for each seed one by on
+      batchLocations.push(location)
+      
+      if (batchLocations.length === batchSize) {
+        const lowestLocationFromBatch = Math.min(...batchLocations)
+        console.log('lowestLocationFromBatch === ', lowestLocationFromBatch)
+        lowestLocations.push(lowestLocationFromBatch)
+        batchLocations = []
       }
     }
-    if (seedsBatch.length > 0) {
-      console.log('remaining seedsBatch.length --- ', seedsBatch.length)
-      const lowestLocation = findLowestLocation(seedsBatch)
-      lowestLocations.push(lowestLocation)      
+    if (batchLocations.length > 0) {
+      const lowestLocationFromBatch = Math.min(...batchLocations)
+      console.log('lowestLocationFromBatch final === ', lowestLocationFromBatch)
+      lowestLocations.push(lowestLocationFromBatch)
     }
   }
   console.log('lowestLocations.length === ', lowestLocations.length)
-  return Math.min(lowestLocations)
+  return Math.min(...lowestLocations)
 }
 const lowestLocationPartTwo = findLowestLocationPartTwo(seeds)
 console.log('lowestLocationPartTwo --- ', lowestLocationPartTwo)
