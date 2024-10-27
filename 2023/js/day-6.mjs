@@ -3,29 +3,38 @@ const headers = { 'Cookie': 'session=53616c7465645f5f19ec1723624ca1bf2d3a9d1fa3b
 let response = await fetch('https://adventofcode.com/2023/day/6/input', { headers })
 let txt = await response.text()
 let inputs = txt.trim().split('\n')
-// console.log('inputs --- ', inputs)
+console.log('inputs --- ', inputs)
 
 const times = inputs[0].split(' ').filter(el => el.length && !isNaN(el))
 const distances = inputs[1].split(' ').filter(el => el.length && !isNaN(el))
+// console.log('times = ', times)
+// console.log('distances = ', distances)
 
 function countWaysToBeatTheRecord(time, distance) {
   let winCounter = 0
-  // i - button pressed time, j - race time 
-  for (let i = 0; i < parseInt(time); i++) {
-    let rslt = 0
-    let btnMultiplier = i === 0 ? 1 : i // should not be 0 on first iteration
-    for (let j = 0; j < parseInt(time); j++) {
-      if (j === 0) j = j + i  // shorten race time by the time button was pressed
-      rslt += btnMultiplier * 1
-    }
-    if (rslt > parseInt(distance)) winCounter++
+  const parsedTime = parseInt(time, 10)
+  const parsedDistance = parseInt(distance, 10)
+
+  for (let i = 0; i < parsedTime; i++) {
+    const btnMultiplier = i === 0 ? 1 : i
+    const rslt = btnMultiplier * (parsedTime - i)
+    if (rslt > parsedDistance) winCounter++
   }
-  // console.log('winCounter = ', winCounter)
   return winCounter
 }
 
-let partOne = 1
-for (let i = 0; i < times.length; i++) {
-  partOne *= countWaysToBeatTheRecord(times[i], distances[i])
-}
-console.log('partOne = ', partOne)
+// uncomment to get part 1 answer
+// let partOne = 1
+// for (let i = 0; i < times.length; i++) {
+  // partOne *= countWaysToBeatTheRecord(times[i], distances[i])
+// }
+// console.log('partOne = ', partOne)
+
+// part 2
+const time = inputs[0].match(/(\d+)/g).reduce((acc, cur) => acc + cur, '')
+const distance = inputs[1].match(/(\d+)/g).reduce((acc, cur) => acc + cur, '')
+console.log('time = ', time)
+console.log('distance = ', distance)
+
+const partTwo = countWaysToBeatTheRecord(time, distance)
+console.log('partTwo = ', partTwo)
