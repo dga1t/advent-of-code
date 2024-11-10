@@ -22,20 +22,33 @@ const cardRank = {
 }
 
 // Hand type arrays ordered by their strength desc:
-let fiveOfKind = []
-let fourOfKind = []
-let fullHouse = []
-let threeOfKind = []
-let twoPair = []
-let onePair = []
-let highCard = []
+const handTypes = {
+  fiveOfKind: [],
+  fourOfKind: [],
+  fullHouse: [],
+  threeOfKind: [],
+  twoPair: [],
+  onePair: [],
+  highCard: []  
+}
 
 populateHandTypeArrays(inputs)
 
-// TODO - run sortHandsOfSameType on each hand type arr (create a single obj ??)
+for (const hands in handTypes) {
+  sortHandsOfSameType(handTypes[hands])
+}
+
+let allHandsSorted = []
+for (const hands in handTypes) {
+  allHandsSorted.push(...handTypes[hands])
+}
+console.log('allHandsSorted length --- ', allHandsSorted.length)
+
+const result = calculateTotalWinnings(allHandsSorted)
+console.log('result --- ', result)
 
 function populateHandTypeArrays(inputs) {
-  // const test = inputs.slice(0, 3)
+  // const test = inputs.slice(0, 10)
   // console.log('test --- ', test)
   
   for (const hand of inputs) {
@@ -44,50 +57,51 @@ function populateHandTypeArrays(inputs) {
     // console.log('cards in hand length --- ', cards.length)
     
     if (isFiveOfAKind(cards)) {
-      fiveOfKind.push(hand)
+      handTypes.fiveOfKind.push(hand)
       continue
     }
     if (isFourOfAKind(cards)) {
-      fourOfKind.push(hand)
+      handTypes.fourOfKind.push(hand)
       continue
     }
     if (isFullHouse(cards)) {
-      fullHouse.push(hand)
+      handTypes.fullHouse.push(hand)
       continue
     }
     if (isThreeOfAKind(cards)) {
-      threeOfKind.push(hand)
+      handTypes.threeOfKind.push(hand)
       continue
     }
     if (isTwoPair(cards)) {
-      twoPair.push(hand)
+      handTypes.twoPair.push(hand)
       continue
     }
     if (isOnePair(cards)) {
-      onePair.push(hand)
+      handTypes.onePair.push(hand)
       continue
     }
-    if (isHighCard(cards)) highCard.push(hand)
-    
+    if (isHighCard(cards)) handTypes.highCard.push(hand)
   }
 }
 
-console.log('fiveOfKind arr === ', fiveOfKind)
-console.log('fourOfKind arr === ', fourOfKind)
-console.log('fullHouse arr === ', fullHouse)
-// console.log('threeOfKind arr === ', threeOfKind)
-// console.log('twoPair arr === ', twoPair)
-// console.log('onePair arr === ', onePair)
-// console.log('highCard arr === ', highCard)
+// console.log('fiveOfKind arr === ', handTypes.fiveOfKind)
+// console.log('fourOfKind arr === ', handTypes.fourOfKind)
+// console.log('fullHouse arr === ', handTypes.fullHouse)
+// console.log('threeOfKind arr === ', handTypes.threeOfKind)
+// console.log('twoPair arr === ', handTypes.twoPair)
+// console.log('onePair arr === ', handTypes.onePair)
+// console.log('highCard arr === ', handTypes.highCard)
 
 function sortHandsOfSameType(hands) {
   hands.sort(compareHands)
 }
 
 function compareHands(hand1, hand2) {
-  for (let i = 0; i < hand1.length; i++) {
-    if (cardRank[hand1[i]] > cardRank[hand2[i]]) return -1
-    if (cardRank[hand1[i]] < cardRank[hand2[i]]) return 1
+  const cards1 = hand1.match(/([A-Z2-9]{5})/)[0]
+  const cards2 = hand2.match(/([A-Z2-9]{5})/)[0]  
+  for (let i = 0; i < cards1.length; i++) {
+    if (cardRank[cards1[i]] > cardRank[cards2[i]]) return -1
+    if (cardRank[cards1[i]] < cardRank[cards2[i]]) return 1
   }
   return 0  // hands are identical in strength
 }
@@ -133,4 +147,14 @@ function isOnePair(hand) {
 function isHighCard(hand) {
   const counts = getCardCounts(hand)
   return counts[0] === 1 && counts.length === 5
+}
+
+function calculateTotalWinnings(hands) {
+  hands.reverse() // hands are sorted from strongest to weakest, so we need to reverse em
+  let totalWinnings = 0
+  for (let i = 0; i < hands.length; i++) {
+    const bid = hands[i].match(/[A-Z2-9]{5} (\d+)/)[1]  
+    totalWinnings += parseInt(bid) * (i + 1)
+  }
+  return totalWinnings
 }
