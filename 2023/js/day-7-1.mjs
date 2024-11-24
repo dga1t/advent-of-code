@@ -21,7 +21,6 @@ const cardRank = {
   '2': 1
 }
 
-// Hand type arrays ordered by their strength desc:
 const handTypes = {
   fiveOfKind: [],
   fourOfKind: [],
@@ -106,7 +105,7 @@ function compareHands(hand1, hand2) {
   return 0  // hands are identical in strength
 }
 
-function getCardCounts(hand) {
+function countCards(hand) {
   const counts = {}
   for (const card of hand) {
     counts[card] = (counts[card] || 0) + 1
@@ -115,37 +114,37 @@ function getCardCounts(hand) {
 }
 
 function isFiveOfAKind(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 5
 }
 
 function isFourOfAKind(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 4 && counts[1] === 1
 }
 
 function isFullHouse(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 3 && counts[1] === 2
 }
 
 function isThreeOfAKind(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 3 && counts[1] === 1 && counts[2] === 1
 }
 
 function isTwoPair(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 2 && counts[1] === 2 && counts[2] === 1
 }
 
 function isOnePair(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 2 && counts[1] === 1 && counts[2] === 1 && counts[3] === 1
 }
 
 function isHighCard(hand) {
-  const counts = getCardCounts(hand)
+  const counts = countCards(hand)
   return counts[0] === 1 && counts.length === 5
 }
 
