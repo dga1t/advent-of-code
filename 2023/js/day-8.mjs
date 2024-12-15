@@ -6,17 +6,17 @@ let inputs = txt.trim().split('\n')
 // console.log('inputs --- ', inputs)
 // console.log('inputs.length--- ', inputs.length)
 
-const instructions = inputs[0]
+const moves = inputs[0]
 const nodes = inputs.slice(2)
-// console.log('instructions ---', instructions)
-// console.log('instructions.length ---', instructions.length)
+// console.log('moves ---', moves)
+// console.log('moves.length ---', moves.length)
 // console.log('nodes ---', nodes)
 // console.log('nodes.length ---', nodes.length)
 
 const nodesMap = getNodesMap(nodes)
 // console.log('nodesMap ---', nodesMap)
 
-const partOneResult = followInstructions(nodesMap, instructions)
+const partOneResult = followMoves(nodesMap, moves)
 console.log('partOneResult ---', partOneResult)
 
 function getNodesMap(nodes) {
@@ -29,33 +29,19 @@ function getNodesMap(nodes) {
   return rslt
 }
 
-function followInstructions(nodesMap, instructions) {
-  let stepsCounter = 0
-  let curParentNode = nodesMap.entries().next().value[0]  // starting with the first node
-  // console.log('starting parentNode ===', curParentNode)
+function followMoves(nodesMap, moves) {
+  let steps = 0
+  let current = 'AAA'
   
-  for (let i = 0; i < instructions.length; i++) {
-    stepsCounter++
-    const [leftNode, rightNode] = nodesMap.get(curParentNode)
-    // console.log('leftNode ---', leftNode)
-    // console.log('rightNode ---', rightNode)
-    
-    curParentNode = instructions[i] === 'L' ? leftNode : rightNode
-    // console.log('curParentNode ---', curParentNode)
-    
-    if (curParentNode === 'ZZZ') {
-      console.info('*** found ZZZ!!1 ***')
-      return stepsCounter
-    }
-    
-    if (i === instructions.length - 1) {
-      console.log('stepsCounter ---', stepsCounter)
-      console.info('*** starting from the beginning of instructions again oO ***')
-      i = 0
+  while (current != 'ZZZ') {
+    for (const move of moves) {
+      const [leftNode, rightNode] = nodesMap.get(current)
+      // console.log('leftNode ---', leftNode)
+      // console.log('rightNode ---', rightNode)
+      current = move === 'L' ? leftNode : rightNode      
+      steps++
+      if (current === 'ZZZ') break
     }
   }
-  
-  console.info('*** did not find ZZZ :( ***')
-  return stepsCounter
+  return steps
 }
-
